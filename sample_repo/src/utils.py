@@ -1,4 +1,4 @@
-def is_even(n):
+def is_even(n ):
     return n % 2 == 0
 
 def to_upper(text) :

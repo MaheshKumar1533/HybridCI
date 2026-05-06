@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cache Statistics</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="site-header flex space-between">
+            <h2 class="site-title" style="margin:0">Cache Statistics & Language Analysis</h2>
+            <div class="actions">
+                <a class="btn" href="/">Back to Dashboard</a>
+            </div>
+        </header>
+
+        <section class="cards-grid">
+            <div class="card">
+                <h3>Total Caches</h3>
+                <div class="metric" id="total-caches">0</div>
+            </div>
+            <div class="card">
+                <h3>Language-Aware Caches</h3>
+                <div class="metric" id="lang-caches">0</div>
+            </div>
+            <div class="card">
+                <h3>Languages Tracked</h3>
+                <div class="metric" id="languages-count">0</div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h3>Language Distribution in Project</h3>
+            <canvas id="languageChart"></canvas>
+        </section>
+
+        <section class="card">
+            <h3>Recently Changed Languages</h3>
+            <div id="changed-langs" style="padding: 12px 0;">
+                <p class="muted">Loading...</p>
+            </div>
+        </section>
+
+        <section class="card">
+            <h3>Language-Specific Caches</h3>
+            <div id="lang-breakdown" style="padding: 12px 0;">
+                <p class="muted">Loading...</p>
+            </div>
+        </section>
+    </div>
+
+    <script>
+    async function loadCacheStats() {
+        try {
+            const res = await fetch('/cache-stats-api');
+            const data = await res.json();
+
+            // Update metrics
+            document.getElementById('total-caches').textContent = data.cache.total_caches || 0;
+            document.getElementById('lang-caches').textContent = data.cache.total_language_caches || 0;
+            document.getElementById('languages-count').textContent = Object.keys(data.cache.languages || {}).length;
+
+            // Project languages chart
+            const projectLangs = data.project_languages.by_language || {};
+            const langNames = Object.keys(projectLangs);
+            const langCounts = langNames.map(l => projectLangs[l].length);
+
+            const ctx = document.getElementById('languageChart');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: langNames,
+                    datasets: [{
+                        data: langCounts,
+                        backgroundColor: [
+                            'rgba(91, 140, 255, 0.8)',
+                            'rgba(55, 211, 153, 0.8)',
+                            'rgba(251, 191, 36, 0.8)',
+                            'rgba(248, 113, 113, 0.8)',
+                            'rgba(167, 139, 250, 0.8)',
+                            'rgba(34, 197, 94, 0.8)',
+                            'rgba(236, 72, 153, 0.8)',
+                            'rgba(59, 130, 246, 0.8)'
+                        ],
+                        borderColor: getComputedStyle(document.documentElement).getPropertyValue('--panel'),
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: {
+                            labels: { color: getComputedStyle(document.documentElement).getPropertyValue('--text') }
+                        }
+                    }
+                }
+            });
+
+            // Changed languages
+            const changedLangs = data.recently_changed_languages || [];
+            const changedDiv = document.getElementById('changed-langs');
+            if (changedLangs.length > 0) {
+                changedDiv.innerHTML = changedLangs.map(lang => 
+                    `<span class="badge" style="background: rgba(91, 140, 255, 0.15); color: #5b8cff; margin-right: 8px; margin-bottom: 8px;">${lang}</span>`
+                ).join('');
+            } else {
+                changedDiv.innerHTML = '<p class="muted">No recent changes detected</p>';
+            }
+
+            // Language-specific caches breakdown
+            const langBreakdown = data.cache.languages || {};
+            const breakdownDiv = document.getElementById('lang-breakdown');
+            if (Object.keys(langBreakdown).length > 0) {
+                breakdownDiv.innerHTML = Object.entries(langBreakdown)
+                    .map(([lang, count]) => 
+                        `<div style="padding: 8px 0; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between;">
+                            <span>${lang}</span>
+                            <span class="badge success">${count} cache(s)</span>
+                        </div>`
+                    ).join('');
+            } else {
+                breakdownDiv.innerHTML = '<p class="muted">No language-specific caches yet</p>';
+            }
+
+        } catch (e) {
+            console.error('Error loading cache stats:', e);
+            document.getElementById('total-caches').textContent = 'Error';
+        }
+    }
+
+    loadCacheStats();
+    </script>
+</body>
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>HYBRIDCI Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="site-header">
+            <h1 class="site-title">HYBRIDCI – CI Optimization Dashboard</h1>
+            <div class="actions">
+                <a class="btn primary" href="/run" onclick="runCIPipeline(event)">Run CI Pipeline</a>
+                <a class="btn" href="/runs">View Run History</a>
+                <a class="btn" href="/cache-stats">Cache Statistics</a>
+            </div>
+        </header>
+
+        <section class="run-section">
+            <button class="btn-run-large" onclick="runCIPipelineNow(event)">
+                <span class="run-icon">▶</span> RUN PIPELINE NOW
+            </button>
+        </section>
+
+        <section class="cards-grid">
+            <div class="card">
+                <h3>Average CI Time</h3>
+                <div class="metric">{{ '%.2f'|format(avg_time or 0) }}<span class="muted" style="font-size:0.9rem; font-weight:600"> s</span></div>
+            </div>
+            <div class="card">
+                <h3>Average Tests Executed</h3>
+                <div class="metric">{{ '%.0f'|format(avg_tests or 0) }}</div>
+            </div>
+            <div class="card">
+                <h3>Cache Hit Rate</h3>
+                <div class="metric">{{ '%.1f'|format(cache_stats.cache_hit_rate or 0) }}<span class="muted" style="font-size:0.9rem; font-weight:600">%</span></div>
+            </div>
+            <div class="card">
+                <h3>Total Runs</h3>
+                <div class="metric">{{ cache_stats.total_runs or 0 }}</div>
+            </div>
+        </section>
+
+        <section class="card chart-card">
+            <h3 style="margin-top: 0">CI Runtime Trend</h3>
+            <canvas id="ciChart"></canvas>
+        </section>
+
+        <div id="status-message" style="display:none; margin-top:16px; padding:12px; border-radius:8px;"></div>
+    </div>
+
+    <script>
+    function runCIPipelineNow(event) {
+        event.preventDefault();
+        const btn = event.target.closest('button');
+        const statusDiv = document.getElementById('status-message');
+        
+        btn.disabled = true;
+        btn.textContent = '⏳ Running...';
+        statusDiv.style.display = 'none';
+        
+        fetch('/run')
+            .then(r => r.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    let msg = `OK: Pipeline completed in ${data.time.toFixed(2)}s with ${data.tests.length} tests`;
+                    if (data.languages) {
+                        msg += ` [${data.languages.join(', ')}]`;
+                    }
+                    statusDiv.textContent = msg;
+                    statusDiv.style.background = 'rgba(55, 211, 153, 0.15)';
+                    statusDiv.style.color = '#37d399';
+                } else {
+                    statusDiv.textContent = 'ERROR: ' + data.message;
+                    statusDiv.style.background = 'rgba(248, 113, 113, 0.15)';
+                    statusDiv.style.color = '#f87171';
+                }
+                statusDiv.style.display = 'block';
+                setTimeout(() => location.reload(), 2000);
+            })
+            .catch(e => {
+                statusDiv.textContent = 'ERROR: ' + e.message;
+                statusDiv.style.background = 'rgba(248, 113, 113, 0.15)';
+                statusDiv.style.color = '#f87171';
+                statusDiv.style.display = 'block';
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.textContent = '▶ RUN PIPELINE NOW';
+            });
+    }
+
+    function runCIPipeline(event) {
+        event.preventDefault();
+        const btn = event.target;
+        const statusDiv = document.getElementById('status-message');
+        
+        btn.disabled = true;
+        btn.textContent = 'Running...';
+        statusDiv.style.display = 'none';
+        
+        fetch('/run')
+            .then(r => r.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    let msg = `✓ Pipeline completed in ${data.time.toFixed(2)}s with ${data.tests.length} tests`;
+                    if (data.languages) {
+                        msg += ` [${data.languages.join(', ')}]`;
+                    }
+                    statusDiv.textContent = msg;
+                    statusDiv.style.background = 'rgba(55, 211, 153, 0.15)';
+                    statusDiv.style.color = '#37d399';
+                } else {
+                    statusDiv.textContent = '✗ Error: ' + data.message;
+                    statusDiv.style.background = 'rgba(248, 113, 113, 0.15)';
+                    statusDiv.style.color = '#f87171';
+                }
+                statusDiv.style.display = 'block';
+                location.reload();
+            })
+            .catch(e => {
+                statusDiv.textContent = '✗ Error: ' + e.message;
+                statusDiv.style.background = 'rgba(248, 113, 113, 0.15)';
+                statusDiv.style.color = '#f87171';
+                statusDiv.style.display = 'block';
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.textContent = 'Run CI Pipeline';
+            });
+    }
+
+    const ctx = document.getElementById('ciChart');
+    if (ctx) {
+        const dataPoints = {{ times }};
+        const labels = Array.from({ length: dataPoints.length }, (_, i) => `Run ${i+1}`);
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels,
+                datasets: [{
+                    label: 'CI Runtime (seconds)',
+                    data: dataPoints,
+                    borderColor: '#5b8cff',
+                    backgroundColor: 'rgba(91, 140, 255, 0.15)',
+                    borderWidth: 2,
+                    tension: 0.28,
+                    pointRadius: 3,
+                    fill: true
+                }]
+            },
+            options: {
+                plugins: { legend: { labels: { color: getComputedStyle(document.documentElement).getPropertyValue('--text') } } },
+                scales: {
+                    x: { ticks: { color: getComputedStyle(document.documentElement).getPropertyValue('--muted') }, grid: { color: 'rgba(128,128,160,0.15)' } },
+                    y: { ticks: { color: getComputedStyle(document.documentElement).getPropertyValue('--muted') }, grid: { color: 'rgba(128,128,160,0.15)' } }
+                }
+            }
+        });
+    }
+    </script>
+</body>
+</html>
