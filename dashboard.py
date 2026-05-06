@@ -4,61 +4,61 @@ import datetime
 
 app = Flask(__name__)
 
-def generate_mock_data():
-    """Generates a realistic run history for the dashboard presentation."""
+import sqlite3
+
+def get_real_data():
+    """Fetches real run history from the SQLite database."""
     history = []
-    base_time = datetime.datetime.now() - datetime.timedelta(days=30)
     
+    try:
+        conn = sqlite3.connect("ci.db")
+        cursor = conn.cursor()
+        
+        # Check if table exists
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='run_history'")
+        if not cursor.fetchone():
+            return {"kpis": {"total_time_saved_hours": 0, "total_compute_saved_hours": 0, "avg_optimization": 0}, "history": []}
+            
+        cursor.execute("SELECT run_id, run_date, original_time, optimized_time, time_saved, compute_saved, opt_percentage, cache_status, primary_language FROM run_history ORDER BY run_date DESC")
+        rows = cursor.fetchall()
+        conn.close()
+    except Exception as e:
+        print(f"Database error: {e}")
+        return {"kpis": {"total_time_saved_hours": 0, "total_compute_saved_hours": 0, "avg_optimization": 0}, "history": []}
+        
     total_time_saved = 0
     total_compute_saved = 0
     optimization_percentages = []
     
-    for i in range(1, 101):
-        run_date = base_time + datetime.timedelta(hours=i * 7.2)
-        original_time = random.uniform(10.0, 45.0)  # minutes
-        
-        # Simulate optimization: caching and impact selective testing
-        is_cache_hit = random.random() > 0.3
-        optimization_factor = random.uniform(0.4, 0.9) if is_cache_hit else random.uniform(0.1, 0.3)
-        
-        optimized_time = original_time * (1.0 - optimization_factor)
-        time_saved = original_time - optimized_time
-        
-        # Compute saved (CPU hours) = time saved * cores (assume 4 cores) / 60
-        compute_saved = (time_saved * 4) / 60.0
-        
-        opt_percentage = (time_saved / original_time) * 100
+    for row in rows:
+        run_id, run_date, original_time, optimized_time, time_saved, compute_saved, opt_percentage, cache_status, lang = row
         
         total_time_saved += time_saved
         total_compute_saved += compute_saved
         optimization_percentages.append(opt_percentage)
         
         history.append({
-            "run_id": f"CI-{1000 + i}",
-            "date": run_date.strftime("%Y-%m-%d %H:%M"),
+            "run_id": run_id,
+            "date": run_date,
             "original_time": round(original_time, 2),
             "optimized_time": round(optimized_time, 2),
             "time_saved": round(time_saved, 2),
             "compute_saved": round(compute_saved, 2),
             "opt_percentage": round(opt_percentage, 1),
-            "cache": "HIT" if is_cache_hit else "MISS",
-            "language": random.choice(["Python", "Java", "Node.js", "Go", "Python", "Python"])
+            "cache": cache_status,
+            "language": lang
         })
         
-    history.reverse() # newest first
-    
-    avg_optimization = sum(optimization_percentages) / len(optimization_percentages)
+    avg_optimization = sum(optimization_percentages) / len(optimization_percentages) if optimization_percentages else 0
     
     return {
         "kpis": {
-            "total_time_saved_hours": round(total_time_saved / 60.0, 1),
-            "total_compute_saved_hours": round(total_compute_saved, 1),
+            "total_time_saved_hours": round(total_time_saved / 3600.0, 4),  # Convert seconds to hours
+            "total_compute_saved_hours": round(total_compute_saved / 60.0, 4), # Convert compute minutes to hours
             "avg_optimization": round(avg_optimization, 1)
         },
         "history": history
     }
-
-mock_data = generate_mock_data()
 
 @app.route("/")
 def index():
@@ -66,7 +66,7 @@ def index():
 
 @app.route("/api/metrics")
 def metrics():
-    return jsonify(mock_data)
+    return jsonify(get_real_data())
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

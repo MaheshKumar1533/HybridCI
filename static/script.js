@@ -57,7 +57,7 @@ function renderChart(history) {
             labels: labels,
             datasets: [
                 {
-                    label: 'Original Execution Time (min)',
+                    label: 'Original Execution Time (s)',
                     data: originalTimes,
                     borderColor: 'rgba(245, 158, 11, 0.5)',
                     backgroundColor: 'transparent',
@@ -67,7 +67,7 @@ function renderChart(history) {
                     tension: 0.4
                 },
                 {
-                    label: 'Optimized Execution Time (min)',
+                    label: 'Optimized Execution Time (s)',
                     data: optimizedTimes,
                     borderColor: '#10b981',
                     backgroundColor: gradientOpt,
@@ -144,7 +144,8 @@ function renderTable(history) {
             <td><span class="badge badge-lang">${run.language}</span></td>
             <td><span class="badge ${cacheBadgeClass}">${run.cache}</span></td>
             <td><strong style="color: var(--success)">${run.opt_percentage}%</strong></td>
-            <td>${run.time_saved} min</td>
+            <td>${run.original_time} s</td>
+            <td>${run.time_saved} s</td>
         `;
         
         historyTbody.appendChild(tr);

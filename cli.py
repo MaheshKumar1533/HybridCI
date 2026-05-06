@@ -110,6 +110,25 @@ def main():
                 
         time_saved = max(0, baseline_time - duration)
         
+        # Save metrics to DB
+        import sqlite3
+        import datetime
+        import uuid
+        
+        compute_saved = (time_saved * 4) / 60.0
+        opt_percentage = (time_saved / baseline_time) * 100 if baseline_time > 0 else 0
+        try:
+            conn = sqlite3.connect("ci.db")
+            cursor = conn.cursor()
+            cursor.execute("""
+                INSERT INTO run_history (run_id, run_date, original_time, optimized_time, time_saved, compute_saved, opt_percentage, cache_status, primary_language)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (f"CI-{str(uuid.uuid4())[:6].upper()}", datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), baseline_time, duration, time_saved, compute_saved, opt_percentage, "HIT" if cache_hit else "MISS", "Python"))
+            conn.commit()
+            conn.close()
+        except Exception as e:
+            print(f"\n[Warning] Could not save metrics to DB: {e}")
+        
         print("\n" + "="*50)
         print(" HYBRID CI EXECUTION REPORT")
         print("="*50)
@@ -198,6 +217,25 @@ def main():
         optimized_time = end_optimized - start_optimized
         
         time_saved = max(0, baseline_time - optimized_time)
+        
+        # Save demo metrics to DB
+        import sqlite3
+        import datetime
+        import uuid
+        
+        compute_saved = (time_saved * 4) / 60.0
+        opt_percentage = (time_saved / baseline_time) * 100 if baseline_time > 0 else 0
+        try:
+            conn = sqlite3.connect("ci.db")
+            cursor = conn.cursor()
+            cursor.execute("""
+                INSERT INTO run_history (run_id, run_date, original_time, optimized_time, time_saved, compute_saved, opt_percentage, cache_status, primary_language)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (f"CI-{str(uuid.uuid4())[:6].upper()}", datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), baseline_time, optimized_time, time_saved, compute_saved, opt_percentage, "HIT" if cache_hit else "MISS", "Python"))
+            conn.commit()
+            conn.close()
+        except Exception as e:
+            print(f"\n[Warning] Could not save metrics to DB: {e}")
         
         print("\n" + "="*50)
         print(" HYBRID CI PERFORMANCE COMPARISON")
