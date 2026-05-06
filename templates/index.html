@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HybridCI Optimization Dashboard</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div class="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <div class="dashboard-container">
+        <header class="dashboard-header">
+            <div class="header-content">
+                <div class="logo">
+                    <i data-lucide="zap" class="icon-zap"></i>
+                    <h1>HybridCI <span>Dashboard</span></h1>
+                </div>
+                <p class="subtitle">Real-time metrics and algorithm optimization overview</p>
+            </div>
+        </header>
+
+        <!-- KPI Cards -->
+        <section class="kpi-grid">
+            <div class="kpi-card glass">
+                <div class="kpi-icon"><i data-lucide="clock"></i></div>
+                <div class="kpi-data">
+                    <h3 id="kpi-time">-- hrs</h3>
+                    <p>Total Time Saved</p>
+                </div>
+            </div>
+            <div class="kpi-card glass">
+                <div class="kpi-icon"><i data-lucide="cpu"></i></div>
+                <div class="kpi-data">
+                    <h3 id="kpi-compute">-- hrs</h3>
+                    <p>Compute Saved</p>
+                </div>
+            </div>
+            <div class="kpi-card glass">
+                <div class="kpi-icon"><i data-lucide="trending-up"></i></div>
+                <div class="kpi-data">
+                    <h3 id="kpi-opt">-- %</h3>
+                    <p>Avg Optimization</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chart Section -->
+        <section class="chart-section glass">
+            <div class="section-header">
+                <h2>Execution Time Trends</h2>
+                <p>Original vs Optimized Time per CI Run (Minutes)</p>
+            </div>
+            <div class="chart-container">
+                <canvas id="optimizationChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Data Table Section -->
+        <section class="table-section glass">
+            <div class="section-header">
+                <h2>Run History Details</h2>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Run ID</th>
+                            <th>Date</th>
+                            <th>Language</th>
+                            <th>Cache Status</th>
+                            <th>Opt. %</th>
+                            <th>Time Saved</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-tbody">
+                        <!-- Rows injected via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
