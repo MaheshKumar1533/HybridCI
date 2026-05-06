@@ -1,3 +1,9 @@
-*.pkl
-*.json
-*.pyc
+*
+!.gitignore
+!sample_repo/
+!sample_repo/**
+
+# for Git Push:
+# *.pkl
+# *.json
+# *.pyc
