@@ -12,15 +12,27 @@ class DependencyGraphMock:
         return [f for f in self.graph.keys() if os.path.basename(f).startswith("test_")]
         
     def get_shortest_path(self, test, changed_file):
-        # Mock logic: distance 1 if changed_file is in test's name, else 2
-        return 1 if "test" in test and "auth" in changed_file and "auth" in test else 2
+        changed_module = os.path.splitext(os.path.basename(changed_file))[0]
+        
+        # Check if the test file directly imports the changed module
+        test_imports = self.graph.get(test, [])
+        if changed_module in test_imports:
+            return 1
+            
+        # Fallback: check standard naming convention (test_xyz.py depends on xyz.py)
+        test_name = os.path.basename(test)
+        if changed_module in test_name:
+            return 1
+            
+        # No dependency path found
+        return float('inf')
 
     def get_commit_frequency(self, changed_file):
-        return 0.5  # Mock frequency
+        return 0.5
 
 class CoverageMatrixMock:
     def get_overlap(self, test, changed_file):
-        return 0.8  # Mock overlap
+        return 0.8
 
 class ImpactEngine:
     def __init__(self, db_path="ci.db"):
@@ -41,8 +53,14 @@ class ImpactEngine:
                     path = os.path.join(root, file)
                     with open(path, "r", encoding="utf-8") as f:
                         tree = ast.parse(f.read())
-                        # Fixed the exact snippet slightly to be valid Python (alias.name instead of node.names.name)
-                        imports = [alias.name for node in ast.walk(tree) if isinstance(node, ast.Import) for alias in node.names]
+                        imports = []
+                        for node in ast.walk(tree):
+                            if isinstance(node, ast.Import):
+                                for alias in node.names:
+                                    imports.append(alias.name)
+                            elif isinstance(node, ast.ImportFrom):
+                                if node.module:
+                                    imports.append(node.module)
                         graph[path] = imports
         return graph
 
@@ -53,6 +71,9 @@ def calculate_impact_score(modified_files, dependency_graph, coverage_matrix, we
         total_score = 0
         for changed_file in modified_files:
             distance = dependency_graph.get_shortest_path(test, changed_file)
+            if distance == float('inf'):
+                continue  # No path means 0 impact
+                
             term1 = (1.0 / distance) if distance > 0 else 0
             overlap = coverage_matrix.get_overlap(test, changed_file)
             term2 = overlap
