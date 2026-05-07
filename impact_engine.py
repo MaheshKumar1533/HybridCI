@@ -91,7 +91,7 @@ class ImpactEngine:
         java_import_re = re.compile(r'import\s+([a-zA-Z0-9_.]+);')
         
         for root, dirs, files in os.walk(root_dir):
-            if any(ignore in root for ignore in ["venv", ".venv", ".git", "node_modules", "__pycache__", ".gradle", ".idea", "target", "build"]):
+            if any(ignore in root for ignore in ["venv", ".venv", ".git", "node_modules", "__pycache__", ".gradle", ".idea", "target", "build", "repos"]):
                 continue
                 
             for file in files:

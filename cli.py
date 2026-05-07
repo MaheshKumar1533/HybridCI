@@ -119,7 +119,7 @@ def main():
         primary_lang = cache_mgr.determine_primary_language(modified_files)
         
         # Determine Cache Status for Test execution
-        state_str = json.dumps({"modified": modified_files, "tests": selected}, sort_keys=True)
+        state_str = json.dumps({"modified": sorted(modified_files), "tests": sorted(selected)}, sort_keys=True)
         state_hash = hashlib.md5(state_str.encode()).hexdigest()
         
         CACHE_FILE = ".cli_last_run.json"

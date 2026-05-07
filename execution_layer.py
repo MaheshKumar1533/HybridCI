@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+import random
 
 def run_tests_in_docker(test_files, enable_dlc=True):
     if not test_files:
@@ -13,12 +14,12 @@ def run_tests_in_docker(test_files, enable_dlc=True):
     if enable_dlc:
         print("DLC Status: ENABLED")
         # Simulate DLC hit (very fast build)
-        docker_build_time = 0.5
+        docker_build_time = 0.0
         print(f"Docker cache hit! Build took {docker_build_time}s.")
     else:
         print("DLC Status: DISABLED")
         # Simulate DLC miss (slow build, downloading dependencies, etc.)
-        docker_build_time = 4.5
+        docker_build_time = round(random.uniform(1.0, 2.0), 2)
         print(f"Docker building layers from scratch... Build took {docker_build_time}s.")
         
     time.sleep(docker_build_time)
