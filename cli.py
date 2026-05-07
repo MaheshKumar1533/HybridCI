@@ -41,12 +41,12 @@ def main():
         dep_graph = DependencyGraph(graph_data)
         
         scores = calculate_impact_score(modified, dep_graph, engine)
-        selected = select_tests(scores, threshold=0.4)
+        selected = select_tests(scores, threshold=0.001)
         
         all_tests = dep_graph.all_tests()
         
         print(f"Impact Scores: {scores}")
-        print(f"Total Tests: {len(all_tests)}, Selected Tests (IS >= 0.4): {len(selected)}")
+        print(f"Total Tests: {len(all_tests)}, Selected Tests (IS > 0.001): {len(selected)}")
         
         run_data = {
             "modified_files": modified,
