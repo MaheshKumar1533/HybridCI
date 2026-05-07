@@ -3,9 +3,11 @@ lucide.createIcons();
 
 // DOM Elements
 const kpiTime = document.getElementById('kpi-time');
-const kpiCompute = document.getElementById('kpi-compute');
+const kpiCost = document.getElementById('kpi-cost');
 const kpiOpt = document.getElementById('kpi-opt');
+const kpiReduction = document.getElementById('kpi-reduction');
 const historyTbody = document.getElementById('history-tbody');
+const projectSelect = document.getElementById('project-select');
 
 // Initialize Chart.js with dark mode defaults
 Chart.defaults.color = '#94a3b8';
@@ -15,7 +17,8 @@ let optimizationChart;
 
 async function fetchMetrics() {
     try {
-        const response = await fetch('/api/metrics');
+        const project = projectSelect ? projectSelect.value : 'all';
+        const response = await fetch(`/api/metrics?project=${project}`);
         const data = await response.json();
         
         updateKPIs(data.kpis);
@@ -26,10 +29,15 @@ async function fetchMetrics() {
     }
 }
 
+if (projectSelect) {
+    projectSelect.addEventListener('change', fetchMetrics);
+}
+
 function updateKPIs(kpis) {
     kpiTime.innerText = `${kpis.total_time_saved_hours} hrs`;
-    kpiCompute.innerText = `${kpis.total_compute_saved_hours} hrs`;
+    kpiCost.innerText = `$${kpis.total_cost_saved}`;
     kpiOpt.innerText = `${kpis.avg_optimization}%`;
+    kpiReduction.innerText = `${kpis.avg_test_reduction}%`;
 }
 
 function renderChart(history) {
@@ -131,21 +139,27 @@ function renderChart(history) {
 function renderTable(history) {
     historyTbody.innerHTML = '';
     
-    // Render all 100 runs in the table
+    // Render all runs in the table
     history.forEach(run => {
         const tr = document.createElement('tr');
         
         // Cache badge styling
         const cacheBadgeClass = run.cache === 'HIT' ? 'badge-hit' : 'badge-miss';
+        const dlcBadgeClass = run.dlc_status === 'ENABLED' ? 'badge-hit' : 'badge-miss';
         
         tr.innerHTML = `
             <td><strong>${run.run_id}</strong></td>
-            <td><span style="color: var(--text-secondary); font-size: 0.85rem">${run.date}</span></td>
+            <td style="white-space:nowrap;"><span style="color: var(--text-secondary); font-size: 0.85rem">${run.date.substring(5, 16)}</span></td>
+            <td><span class="badge" style="background: rgba(255,255,255,0.1);">${run.project || 'unknown'}</span></td>
             <td><span class="badge badge-lang">${run.language}</span></td>
+            <td><span class="badge ${dlcBadgeClass}">${run.dlc_status}</span></td>
+            <td>${run.build_time} s</td>
             <td><span class="badge ${cacheBadgeClass}">${run.cache}</span></td>
+            <td>${run.selected_tests} / ${run.total_tests} (-${run.test_reduction}%)</td>
             <td><strong style="color: var(--success)">${run.opt_percentage}%</strong></td>
-            <td>${run.original_time} s</td>
+            <td>${run.optimized_time} s</td>
             <td>${run.time_saved} s</td>
+            <td><strong style="color: var(--success)">$${run.cost_saved}</strong></td>
         `;
         
         historyTbody.appendChild(tr);
@@ -154,3 +168,5 @@ function renderTable(history) {
 
 // Initial fetch
 fetchMetrics();
+
+

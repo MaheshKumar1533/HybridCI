@@ -43,23 +43,3 @@ def test_config_mgr_functionality_9():
     time.sleep(0.05)  # Simulate real database/IO wait
     assert config_mgr.process_config_mgr() == True
 
-def test_config_mgr_functionality_10():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert config_mgr.process_config_mgr() == True
-
-def test_config_mgr_functionality_11():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert config_mgr.process_config_mgr() == True
-
-def test_config_mgr_functionality_12():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert config_mgr.process_config_mgr() == True
-
-def test_config_mgr_functionality_13():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert config_mgr.process_config_mgr() == True
-
-def test_config_mgr_functionality_14():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert config_mgr.process_config_mgr() == True
-

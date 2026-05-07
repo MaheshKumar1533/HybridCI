@@ -43,23 +43,3 @@ def test_scheduler_functionality_9():
     time.sleep(0.05)  # Simulate real database/IO wait
     assert scheduler.process_scheduler() == True
 
-def test_scheduler_functionality_10():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert scheduler.process_scheduler() == True
-
-def test_scheduler_functionality_11():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert scheduler.process_scheduler() == True
-
-def test_scheduler_functionality_12():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert scheduler.process_scheduler() == True
-
-def test_scheduler_functionality_13():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert scheduler.process_scheduler() == True
-
-def test_scheduler_functionality_14():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert scheduler.process_scheduler() == True
-

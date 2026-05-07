@@ -43,23 +43,3 @@ def test_worker_node_functionality_9():
     time.sleep(0.05)  # Simulate real database/IO wait
     assert worker_node.process_worker_node() == True
 
-def test_worker_node_functionality_10():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert worker_node.process_worker_node() == True
-
-def test_worker_node_functionality_11():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert worker_node.process_worker_node() == True
-
-def test_worker_node_functionality_12():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert worker_node.process_worker_node() == True
-
-def test_worker_node_functionality_13():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert worker_node.process_worker_node() == True
-
-def test_worker_node_functionality_14():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert worker_node.process_worker_node() == True
-

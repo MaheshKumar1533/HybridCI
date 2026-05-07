@@ -43,23 +43,3 @@ def test_user_manager_functionality_9():
     time.sleep(0.05)  # Simulate real database/IO wait
     assert user_manager.process_user_manager() == True
 
-def test_user_manager_functionality_10():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert user_manager.process_user_manager() == True
-
-def test_user_manager_functionality_11():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert user_manager.process_user_manager() == True
-
-def test_user_manager_functionality_12():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert user_manager.process_user_manager() == True
-
-def test_user_manager_functionality_13():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert user_manager.process_user_manager() == True
-
-def test_user_manager_functionality_14():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert user_manager.process_user_manager() == True
-

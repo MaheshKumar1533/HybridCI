@@ -43,23 +43,3 @@ def test_inventory_tracker_functionality_9():
     time.sleep(0.05)  # Simulate real database/IO wait
     assert inventory_tracker.process_inventory_tracker() == True
 
-def test_inventory_tracker_functionality_10():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert inventory_tracker.process_inventory_tracker() == True
-
-def test_inventory_tracker_functionality_11():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert inventory_tracker.process_inventory_tracker() == True
-
-def test_inventory_tracker_functionality_12():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert inventory_tracker.process_inventory_tracker() == True
-
-def test_inventory_tracker_functionality_13():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert inventory_tracker.process_inventory_tracker() == True
-
-def test_inventory_tracker_functionality_14():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert inventory_tracker.process_inventory_tracker() == True
-

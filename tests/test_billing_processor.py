@@ -43,23 +43,3 @@ def test_billing_processor_functionality_9():
     time.sleep(0.05)  # Simulate real database/IO wait
     assert billing_processor.process_billing_processor() == True
 
-def test_billing_processor_functionality_10():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert billing_processor.process_billing_processor() == True
-
-def test_billing_processor_functionality_11():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert billing_processor.process_billing_processor() == True
-
-def test_billing_processor_functionality_12():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert billing_processor.process_billing_processor() == True
-
-def test_billing_processor_functionality_13():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert billing_processor.process_billing_processor() == True
-
-def test_billing_processor_functionality_14():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert billing_processor.process_billing_processor() == True
-

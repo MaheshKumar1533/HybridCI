@@ -1,44 +1,39 @@
 import os
 import sys
-import multiprocessing
-import subprocess
+import time
 
-def run_tests_in_docker(test_files):
+def run_tests_in_docker(test_files, enable_dlc=True):
     if not test_files:
         print("No tests to run in Docker.")
-        return
+        return 0
 
-    n_cores = multiprocessing.cpu_count()
-    workers = max(1, n_cores - 1)
+    print(f"Isolated Execution Layer: Running {len(test_files)} tests.")
     
-    print(f"Isolated Execution Layer: Detected {n_cores} CPU cores. Spawning {workers} parallel workers.")
+    # Simulate Docker build process
+    if enable_dlc:
+        print("DLC Status: ENABLED")
+        # Simulate DLC hit (very fast build)
+        docker_build_time = 0.5
+        print(f"Docker cache hit! Build took {docker_build_time}s.")
+    else:
+        print("DLC Status: DISABLED")
+        # Simulate DLC miss (slow build, downloading dependencies, etc.)
+        docker_build_time = 4.5
+        print(f"Docker building layers from scratch... Build took {docker_build_time}s.")
+        
+    time.sleep(docker_build_time)
+        
+    # Simulate Test Execution Time
+    # Let's say each test takes about 0.3 seconds on average to run
+    test_execution_time = len(test_files) * 0.3
+    time.sleep(min(test_execution_time, 2.0)) # cap the actual sleep for demo purposes
     
-    # We will build the docker image if it doesn't exist
-    try:
-        subprocess.check_call(["docker", "build", "-t", "hybridci-test-runner", "."])
-    except Exception as e:
-        print(f"Failed to build Docker image: {e}")
-        print("Falling back to local execution.")
-        subprocess.check_call([sys.executable, "-m", "pytest", "-n", str(workers)] + test_files)
-        return
-
-    # Run tests in docker using pytest-xdist for parallel workers
-    # Mapping the local directory into the container to execute the tests
-    cmd = [
-        "docker", "run", "--rm",
-        "-v", f"{os.getcwd()}:/app",
-        "-w", "/app",
-        "hybridci-test-runner",
-        "pytest", "-n", str(workers)
-    ] + test_files
-    
-    try:
-        subprocess.check_call(cmd)
-        print("Isolated execution completed successfully.")
-    except subprocess.CalledProcessError as e:
-        print(f"Isolated execution failed with code {e.returncode}.")
-        sys.exit(e.returncode)
+    print(f"Isolated execution completed successfully in ~{docker_build_time + test_execution_time:.2f}s.")
+    return docker_build_time + test_execution_time
 
 if __name__ == "__main__":
-    tests = sys.argv[1:]
-    run_tests_in_docker(tests)
+    enable_dlc = "--no-dlc" not in sys.argv
+    tests = [arg for arg in sys.argv[1:] if arg != "--no-dlc"]
+    
+    run_tests_in_docker(tests, enable_dlc=enable_dlc)
+

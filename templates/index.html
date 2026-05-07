@@ -20,13 +20,23 @@
     </div>
 
     <div class="dashboard-container">
-        <header class="dashboard-header">
+        <header class="dashboard-header" style="display: flex; justify-content: space-between; align-items: center;">
             <div class="header-content">
                 <div class="logo">
                     <i data-lucide="zap" class="icon-zap"></i>
                     <h1>HybridCI <span>Dashboard</span></h1>
                 </div>
-                <p class="subtitle">Real-time metrics and algorithm optimization overview</p>
+                <p class="subtitle">Real-time metrics, DLC status, and language-aware cache overview</p>
+            </div>
+            <div class="project-selector" style="margin-right: 20px;">
+                <label for="project-select" style="color: var(--text-secondary); margin-right: 10px;">Project:</label>
+                <select id="project-select" style="padding: 8px 12px; border-radius: 8px; background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255,255,255,0.1); color: white; font-family: 'Inter', sans-serif; cursor: pointer;">
+                    <option value="all">All Projects</option>
+                    <option value="webpack">Webpack (JS)</option>
+                    <option value="pandas">Pandas (Python)</option>
+                    <option value="spring-boot">Spring Boot (Java)</option>
+                    <option value="hybridci-mock">Mock Data</option>
+                </select>
             </div>
         </header>
 
@@ -40,17 +50,24 @@
                 </div>
             </div>
             <div class="kpi-card glass">
-                <div class="kpi-icon"><i data-lucide="cpu"></i></div>
+                <div class="kpi-icon"><i data-lucide="dollar-sign"></i></div>
                 <div class="kpi-data">
-                    <h3 id="kpi-compute">-- hrs</h3>
-                    <p>Compute Saved</p>
+                    <h3 id="kpi-cost">$--</h3>
+                    <p>Total Cost Saved</p>
                 </div>
             </div>
             <div class="kpi-card glass">
                 <div class="kpi-icon"><i data-lucide="trending-up"></i></div>
                 <div class="kpi-data">
                     <h3 id="kpi-opt">-- %</h3>
-                    <p>Avg Optimization</p>
+                    <p>Avg Time Reduction</p>
+                </div>
+            </div>
+            <div class="kpi-card glass">
+                <div class="kpi-icon"><i data-lucide="filter"></i></div>
+                <div class="kpi-data">
+                    <h3 id="kpi-reduction">-- %</h3>
+                    <p>Avg Test Reduction</p>
                 </div>
             </div>
         </section>
@@ -67,7 +84,7 @@
         </section>
 
         <!-- Data Table Section -->
-        <section class="table-section glass">
+        <section class="table-section glass" style="overflow-x: auto;">
             <div class="section-header">
                 <h2>Run History Details</h2>
             </div>
@@ -77,11 +94,16 @@
                         <tr>
                             <th>Run ID</th>
                             <th>Date</th>
-                            <th>Language</th>
-                            <th>Cache Status</th>
+                            <th>Project</th>
+                            <th>Lang</th>
+                            <th>DLC</th>
+                            <th>Build Time</th>
+                            <th>Cache</th>
+                            <th>Tests</th>
                             <th>Opt. %</th>
-                            <th>Baseline Time</th>
+                            <th>Optimized</th>
                             <th>Time Saved</th>
+                            <th>Cost Saved</th>
                         </tr>
                     </thead>
                     <tbody id="history-tbody">

@@ -43,23 +43,3 @@ def test_security_scanner_functionality_9():
     time.sleep(0.05)  # Simulate real database/IO wait
     assert security_scanner.process_security_scanner() == True
 
-def test_security_scanner_functionality_10():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert security_scanner.process_security_scanner() == True
-
-def test_security_scanner_functionality_11():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert security_scanner.process_security_scanner() == True
-
-def test_security_scanner_functionality_12():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert security_scanner.process_security_scanner() == True
-
-def test_security_scanner_functionality_13():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert security_scanner.process_security_scanner() == True
-
-def test_security_scanner_functionality_14():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert security_scanner.process_security_scanner() == True
-

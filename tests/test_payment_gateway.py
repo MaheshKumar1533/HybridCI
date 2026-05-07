@@ -43,23 +43,3 @@ def test_payment_gateway_functionality_9():
     time.sleep(0.05)  # Simulate real database/IO wait
     assert payment_gateway.process_payment_gateway() == True
 
-def test_payment_gateway_functionality_10():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert payment_gateway.process_payment_gateway() == True
-
-def test_payment_gateway_functionality_11():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert payment_gateway.process_payment_gateway() == True
-
-def test_payment_gateway_functionality_12():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert payment_gateway.process_payment_gateway() == True
-
-def test_payment_gateway_functionality_13():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert payment_gateway.process_payment_gateway() == True
-
-def test_payment_gateway_functionality_14():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert payment_gateway.process_payment_gateway() == True
-

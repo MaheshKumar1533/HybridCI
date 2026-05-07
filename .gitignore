@@ -6,9 +6,6 @@ venv/
 .venv/
 .pytest_cache/
 .ci_cache/
-.cli_last_run.json
-baseline_time.json
-selected_tests.json
 *.log
 
 # for Git Push:

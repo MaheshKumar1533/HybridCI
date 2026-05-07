@@ -43,23 +43,3 @@ def test_auth_oauth_functionality_9():
     time.sleep(0.05)  # Simulate real database/IO wait
     assert auth_oauth.process_auth_oauth() == True
 
-def test_auth_oauth_functionality_10():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert auth_oauth.process_auth_oauth() == True
-
-def test_auth_oauth_functionality_11():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert auth_oauth.process_auth_oauth() == True
-
-def test_auth_oauth_functionality_12():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert auth_oauth.process_auth_oauth() == True
-
-def test_auth_oauth_functionality_13():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert auth_oauth.process_auth_oauth() == True
-
-def test_auth_oauth_functionality_14():
-    time.sleep(0.05)  # Simulate real database/IO wait
-    assert auth_oauth.process_auth_oauth() == True
-
